@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Godišnjica Firme - Pozivnica</title>
+    
+    <!-- Uvozimo Cinzel font sa Google Fonts da se uklopi sa stilom pozivnice -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Resetovanje osnovnih podešavanja */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cinzel', serif;
+            background-color: #0b0b0b; 
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 10px;
+        }
+
+        /* Kontejner za pozivnicu */
+        .pozivnica-kontejner {
+            width: 100%;
+            max-width: 600px; 
+            position: relative;
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.7);
+        }
+
+        /* Slika pozivnice */
+        .dizajn-slika {
+            width: 100%;
+            display: block;
+            height: auto;
+        }
+
+        /* Stil za tajmer koji stoji ISPOD slike */
+        .tajmer-sekcija {
+            width: 100%;
+            max-width: 600px;
+            background: #111111; 
+            padding: 35px 20px;
+            text-align: center;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0px 15px 30px rgba(0,0,0,0.7);
+            border-top: 1px solid rgba(223, 186, 115, 0.2); 
+        }
+
+        .tajmer-naslov {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 25px;
+            color: #aaaaaa;
+        }
+
+        #countdown {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+
+        .vreme-blok {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 75px;
+        }
+
+        .broj {
+            font-size: 38px;
+            font-weight: 400;
+            color: #dfba73; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .oznaka {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888888;
+            margin-top: 8px;
+        }
+
+        .proslava-pocela {
+            color: #dfba73;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="pozivnica-kontejner">
+        <!-- Ovde je ubačen novi naziv tvoje slike -->
+        <img src="pozivnicaso3.png" alt="Sava Osiguranje Pozivnica" class="dizajn-slika">
+    </div>
+
+    <!-- Sekcija sa tajmerom -->
+    <div class="tajmer-sekcija">
+        <div class="tajmer-naslov">Do svečanosti je ostalo još:</div>
+        <div id="countdown">
+            <div class="vreme-blok"><span class="broj" id="days">00</span><span class="oznaka">Dana</span></div>
+            <div class="vreme-blok"><span class="broj" id="hours">00</span><span class="oznaka">Sati</span></div>
+            <div class="vreme-blok"><span class="broj" id="minutes">00</span><span class="oznaka">Minuta</span></div>
+            <div class="vreme-blok"><span class="broj" id="seconds">00</span><span class="oznaka">Sekundi</span></div>
+        </div>
+    </div>
+
+    <script>
+        // TAČAN DATUM: 03. Septembar 2026. u 19:00č
+        const datumDogadjaja = new Date(2026, 8, 3, 19, 0, 0).getTime(); 
+
+        const X = setInterval(function() {
+            const sada = new Date().getTime();
+            const razlika = datumDogadjaja - sada;
+
+            const dana = Math.floor(razlika / (1000 * 60 * 60 * 24));
+            const sati = Math.floor((razlika % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minuta = Math.floor((razlika % (1000 * 60 * 60)) / (1000 * 60));
+            const sekundi = Math.floor((razlika % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerHTML = dana < 10 ? "0" + dana : dana;
+            document.getElementById("hours").innerHTML = sati < 10 ? "0" + sati : sati;
+            document.getElementById("minutes").innerHTML = minuta < 10 ? "0" + minuta : minuta;
+            document.getElementById("seconds").innerHTML = sekundi < 10 ? "0" + sekundi : sekundi;
+
+            if (razlika < 0) {
+                clearInterval(X);
+                document.querySelector(".tajmer-sekcija").innerHTML = "<h3 class='proslava-pocela'>Svečanost je počela!</h3>";
+            }
+        }, 1000);
+    </script>
+
+</body>
+</html>
