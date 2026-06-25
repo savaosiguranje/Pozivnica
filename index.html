@@ -1,148 +1,346 @@
+bash
+
+cat > /mnt/user-data/outputs/index.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="sr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Godišnjica Firme - Pozivnica</title>
-    
-    <!-- Uvozimo Cinzel font sa Google Fonts da se uklopi sa stilom pozivnice -->
+    <title>Pozivnica | Invitation</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* Resetovanje osnovnih podešavanja */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Cinzel', serif;
-            background-color: #0b0b0b; 
+            background-color: #0b0b0b;
             color: #ffffff;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding: 20px 10px;
+            padding: 20px 10px 50px;
         }
 
-        /* Kontejner za pozivnicu */
-        .pozivnica-kontejner {
-            width: 100%;
-            max-width: 600px; 
-            position: relative;
-            box-shadow: 0px 10px 30px rgba(0,0,0,0.7);
-        }
-
-        /* Slika pozivnice */
-        .dizajn-slika {
-            width: 100%;
-            display: block;
-            height: auto;
-        }
-
-        /* Stil za tajmer koji stoji ISPOD slike */
-        .tajmer-sekcija {
+        /* ── Language toggle ── */
+        .lang-toggle {
             width: 100%;
             max-width: 600px;
-            background: #111111; 
-            padding: 35px 20px;
-            text-align: center;
-            border-bottom-left-radius: 4px;
-            border-bottom-right-radius: 4px;
-            box-shadow: 0px 15px 30px rgba(0,0,0,0.7);
-            border-top: 1px solid rgba(223, 186, 115, 0.2); 
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 12px;
         }
 
-        .tajmer-naslov {
-            font-size: 13px;
+        .lang-btn-group {
+            display: flex;
+            border: 1px solid rgba(223, 186, 115, 0.4);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .lang-btn {
+            padding: 7px 16px;
+            background: transparent;
+            border: none;
+            color: #888888;
+            font-family: 'Cinzel', serif;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: background 0.25s ease, color 0.25s ease;
+        }
+
+        .lang-btn:first-child {
+            border-right: 1px solid rgba(223, 186, 115, 0.4);
+        }
+
+        .lang-btn.aktivan {
+            background: #dfba73;
+            color: #0b0b0b;
+        }
+
+        /* ── Pozivnica slika ── */
+        .pozivnica-kontejner {
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
+
+        .pozivnica-kontejner img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* ── Dugme overlay ── */
+        .dugme-overlay {
+            position: absolute;
+            top: 65.5%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .dugme {
+            display: inline-block;
+            padding: 14px 36px;
+            background: linear-gradient(135deg, #dfba73, #c9a55a);
+            border: none;
+            border-radius: 30px;
+            color: #1a1a1a;
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 3px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: opacity 0.3s ease, transform 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .dugme:hover {
+            opacity: 0.88;
+            transform: scale(1.03);
+        }
+
+        /* ── Donja sekcija ── */
+        .donja-sekcija {
+            width: 100%;
+            max-width: 600px;
+            background: #111111;
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid rgba(223, 186, 115, 0.25);
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0px 15px 35px rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        /* ── Tajmer ── */
+        .tajmer-naslov {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: #888888;
             margin-bottom: 25px;
-            color: #aaaaaa;
         }
 
         #countdown {
             display: flex;
             justify-content: center;
-            gap: 25px;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
         .vreme-blok {
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-width: 75px;
+            min-width: 70px;
+        }
+
+        .separator {
+            font-size: 34px;
+            color: rgba(223, 186, 115, 0.3);
+            line-height: 1;
+            align-self: flex-start;
+            padding-top: 4px;
         }
 
         .broj {
-            font-size: 38px;
+            font-size: 42px;
             font-weight: 400;
-            color: #dfba73; 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            color: #dfba73;
+            line-height: 1;
+            letter-spacing: 2px;
         }
 
         .oznaka {
-            font-size: 10px;
+            font-size: 9px;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #888888;
-            margin-top: 8px;
+            letter-spacing: 3px;
+            color: #666666;
+            margin-top: 10px;
         }
 
         .proslava-pocela {
             color: #dfba73;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             text-transform: uppercase;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+        }
+
+        /* ── Zlatna linija ── */
+        .divider {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #dfba73, transparent);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 400px) {
+            .broj { font-size: 32px; }
+            .vreme-blok { min-width: 56px; }
+            #countdown { gap: 12px; }
+            .dugme { padding: 12px 24px; font-size: 10px; letter-spacing: 2px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="pozivnica-kontejner">
-        <!-- Ovde je ubačen novi naziv tvoje slike -->
-        <img src="pozivnicaso3.png" alt="Sava Osiguranje Pozivnica" class="dizajn-slika">
-    </div>
-
-    <!-- Sekcija sa tajmerom -->
-    <div class="tajmer-sekcija">
-        <div class="tajmer-naslov">Do svečanosti je ostalo još:</div>
-        <div id="countdown">
-            <div class="vreme-blok"><span class="broj" id="days">00</span><span class="oznaka">Dana</span></div>
-            <div class="vreme-blok"><span class="broj" id="hours">00</span><span class="oznaka">Sati</span></div>
-            <div class="vreme-blok"><span class="broj" id="minutes">00</span><span class="oznaka">Minuta</span></div>
-            <div class="vreme-blok"><span class="broj" id="seconds">00</span><span class="oznaka">Sekundi</span></div>
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <div class="lang-btn-group">
+            <button class="lang-btn aktivan" onclick="setLang('sr')">SR</button>
+            <button class="lang-btn" onclick="setLang('en')">EN</button>
         </div>
     </div>
 
-    <script>
-        // TAČAN DATUM: 03. Septembar 2026. u 19:00č
-        const datumDogadjaja = new Date(2026, 8, 3, 19, 0, 0).getTime(); 
+    <!-- Pozivnica slika -->
+    <div class="pozivnica-kontejner">
+        <img id="pozivnica-slika" src="pozivnica-sr.png" alt="Sava Osiguranje Pozivnica">
 
-        const X = setInterval(function() {
+        <!-- HTML dugme pozicionirano na mestu originalnog dugmeta -->
+        <div class="dugme-overlay">
+            <a
+                id="dugme-link"
+                class="dugme"
+                href="https://docs.google.com/forms/d/e/1FAIpQLSdVNo_4dIcVvmEqa7Uu7C7j6UKqvZlkq9LoRKDpI_7KrB83Fw/viewform"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                <span id="dugme-tekst">Potvrdite dolazak</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Tajmer -->
+    <div class="donja-sekcija">
+        <div class="tajmer-wrapper">
+            <div class="tajmer-naslov" id="tajmer-naslov">Do svečanosti je ostalo još</div>
+            <div id="countdown">
+                <div class="vreme-blok">
+                    <span class="broj" id="days">00</span>
+                    <span class="oznaka" id="label-days">Dana</span>
+                </div>
+                <span class="separator">·</span>
+                <div class="vreme-blok">
+                    <span class="broj" id="hours">00</span>
+                    <span class="oznaka" id="label-hours">Sati</span>
+                </div>
+                <span class="separator">·</span>
+                <div class="vreme-blok">
+                    <span class="broj" id="minutes">00</span>
+                    <span class="oznaka" id="label-minutes">Minuta</span>
+                </div>
+                <span class="separator">·</span>
+                <div class="vreme-blok">
+                    <span class="broj" id="seconds">00</span>
+                    <span class="oznaka" id="label-seconds">Sekundi</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+    </div>
+
+    <script>
+        // ── Prevodi ──
+        const prevodi = {
+            sr: {
+                slika: 'pozivnica-sr.png',
+                dugme: 'Potvrdite dolazak',
+                tajmerNaslov: 'Do svečanosti je ostalo još',
+                dana: 'Dana',
+                sati: 'Sati',
+                minuta: 'Minuta',
+                sekundi: 'Sekundi',
+                pocela: 'Svečanost je počela!'
+            },
+            en: {
+                slika: 'pozivnica-en.png',
+                dugme: 'Confirm attendance',
+                tajmerNaslov: 'Time until the event',
+                dana: 'Days',
+                sati: 'Hours',
+                minuta: 'Minutes',
+                sekundi: 'Seconds',
+                pocela: 'The celebration has begun!'
+            }
+        };
+
+        let trenutniJezik = 'sr';
+
+        function setLang(jezik) {
+            trenutniJezik = jezik;
+            const t = prevodi[jezik];
+
+            // Menjaj sliku
+            document.getElementById('pozivnica-slika').src = t.slika;
+
+            // Menjaj dugme
+            document.getElementById('dugme-tekst').textContent = t.dugme;
+
+            // Menjaj tajmer tekstove
+            document.getElementById('tajmer-naslov').textContent = t.tajmerNaslov;
+            document.getElementById('label-days').textContent    = t.dana;
+            document.getElementById('label-hours').textContent   = t.sati;
+            document.getElementById('label-minutes').textContent = t.minuta;
+            document.getElementById('label-seconds').textContent = t.sekundi;
+
+            // Menjaj aktivan stil dugmeta
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('aktivan'));
+            event.target.classList.add('aktivan');
+
+            // Jezik stranice
+            document.documentElement.lang = jezik;
+        }
+
+        // ── Countdown ──
+        const datumDogadjaja = new Date(2026, 8, 3, 19, 0, 0).getTime();
+
+        const tajmer = setInterval(function () {
             const sada = new Date().getTime();
             const razlika = datumDogadjaja - sada;
 
-            const dana = Math.floor(razlika / (1000 * 60 * 60 * 24));
-            const sati = Math.floor((razlika % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minuta = Math.floor((razlika % (1000 * 60 * 60)) / (1000 * 60));
+            if (razlika < 0) {
+                clearInterval(tajmer);
+                const t = prevodi[trenutniJezik];
+                document.getElementById('countdown').closest('.tajmer-wrapper').innerHTML =
+                    "<p class='proslava-pocela'>" + t.pocela + "</p>";
+                return;
+            }
+
+            const dana    = Math.floor(razlika / (1000 * 60 * 60 * 24));
+            const sati    = Math.floor((razlika % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minuta  = Math.floor((razlika % (1000 * 60 * 60)) / (1000 * 60));
             const sekundi = Math.floor((razlika % (1000 * 60)) / 1000);
 
-            document.getElementById("days").innerHTML = dana < 10 ? "0" + dana : dana;
-            document.getElementById("hours").innerHTML = sati < 10 ? "0" + sati : sati;
-            document.getElementById("minutes").innerHTML = minuta < 10 ? "0" + minuta : minuta;
-            document.getElementById("seconds").innerHTML = sekundi < 10 ? "0" + sekundi : sekundi;
-
-            if (razlika < 0) {
-                clearInterval(X);
-                document.querySelector(".tajmer-sekcija").innerHTML = "<h3 class='proslava-pocela'>Svečanost je počela!</h3>";
-            }
+            document.getElementById('days').textContent    = dana    < 10 ? '0' + dana    : dana;
+            document.getElementById('hours').textContent   = sati    < 10 ? '0' + sati    : sati;
+            document.getElementById('minutes').textContent = minuta  < 10 ? '0' + minuta  : minuta;
+            document.getElementById('seconds').textContent = sekundi < 10 ? '0' + sekundi : sekundi;
         }, 1000);
     </script>
 
 </body>
 </html>
+HTMLEOF
+Output
+
+exit code 0
